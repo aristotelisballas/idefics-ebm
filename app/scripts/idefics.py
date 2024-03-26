@@ -40,7 +40,7 @@ def run_inference(img_uri, url=False):
                 # f"{img_url}",
                 # "<end_of_utterance>",
 
-                "User: What is the food and what are the food groups in this image?",
+                "User: What are the food groups in this image?",
                 img,
                 "<end_of_utterance>",
             ],
