@@ -38,6 +38,8 @@ food_groups_dict_updated= {
     'Vegetables': ['carrot', 'broccoli', 'spinach', 'tomato', 'cucumber', 'bell pepper', 'zucchini', 'sweet potato', 'kale', 'asparagus', 'celery', 'cauliflower', 'green beans', 'peas', 'radish', 'eggplant', 'cabbage', 'lettuce', 'onion', 'garlic', 'artichoke', 'leek', 'squash', 'brussels sprouts', 'collard greens', 'beets', 'turnip', 'rutabaga', 'okra', 'swiss chard', 'bok choy', 'parsnip', 'ginger', 'fennel', 'endive', 'arugula', 'mustard greens', 'jicama', 'kohlrabi', 'daikon', 'chicory', 'watercress', 'yam', 'horseradish', 'chayote', 'pumpkin', 'mushrooms'],
 
     'Red Meat': ['beef', 'pork', 'lamb', 'venison', 'bison', 'veal', 'goat', 'rabbit'],
+    
+    'Fast Foods': ['hamburger', 'pizza', 'french fries', 'hot dog', 'chicken nuggets', 'tacos', 'burritos', 'fried chicken', 'onion rings', 'mozzarella sticks', 'cheeseburger','gyro', 'kebab', 'quesadilla', 'chicken wings', 'nachos', 'bagels', 'pretzel', 'sliders', 'corn dog', 'fish and chips', 'potato wedges', 'philly cheesesteak', 'chili dog', 'loaded fries', 'sub sandwich', 'falafel sandwich', 'pita wrap', 'churros', 'popcorn chicken', 'meatball sub', 'bacon cheeseburger', 'chicken sandwich', 'tater tots', 'jalapeño poppers', 'calzone', 'stromboli',  'egg rolls', 'spring rolls', 'empanadas', 'big mac', 'whopper', 'nuggets', 'mcflurry',  'chicken tenders', 'spicy chicken sandwich', 'curly fries', 'taco supreme', 'cinnabon'],
 
 	'White Meat': ['chicken', 'turkey', 'duck', 'goose',],
 
