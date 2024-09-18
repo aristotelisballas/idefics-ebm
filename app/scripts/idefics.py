@@ -1,14 +1,14 @@
 import torch
 from transformers import IdeficsForVisionText2Text, AutoProcessor
 from PIL import Image
-from scripts.utils import find_list_elements_in_string, food_groups_dict
+from scripts.utils import find_list_elements_in_string, food_groups_dict, food_groups_dict_updated
 
 device = "cpu"
 checkpoint = "HuggingFaceM4/idefics-9b-instruct"
 model = IdeficsForVisionText2Text.from_pretrained(checkpoint, torch_dtype=torch.bfloat16).to(device)
 processor = AutoProcessor.from_pretrained(checkpoint)
 
-def run_inference(img_uri, url=False):
+def run_inference(img_uri, url=False,old_dict=True):
     if url:
         prompts = [
             [
@@ -36,7 +36,11 @@ def run_inference(img_uri, url=False):
         print(f"{t}\n")
 
     # Using the detailed food groups dictionary for more specific matching
-    food_groups = find_list_elements_in_string(food_groups_dict, " ".join(generated_text))
+    if old_dict:
+        food_groups = find_list_elements_in_string(food_groups_dict, " ".join(generated_text))
+    else:
+        food_groups = find_list_elements_in_string(food_groups_dict_updated, " ".join(generated_text))
+
     return food_groups, generated_text
 
 

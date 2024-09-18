@@ -22,7 +22,7 @@ def process_image():
     img_url = info["img"]
 
     # print(img)
-    food_groups, pred = run_inference(img_url, True)
+    food_groups, pred = run_inference(img_url, True,True)
 
     output = {"food_groups": food_groups, "prediction": pred}
 
@@ -44,7 +44,29 @@ def upload():
     # Save the uploaded file to a desired location
     file.save(Path(app.config['UPLOAD_FOLDER']) / str(file.filename))
     
-    food_groups, pred = run_inference(file, False)
+    food_groups, pred = run_inference(file, False,True)
+
+    output = {"food_groups": food_groups, "prediction": pred}
+
+    return f"{str(output)}", 200
+
+
+@app.route('/ebm-image-updated', methods=['POST'])
+def upload_udpated():
+    # Check if the POST request contains a file
+    if 'file' not in request.files:
+        return 'No file part', 400
+
+    file = request.files['file']
+
+    # Check if the file is empty
+    if file.filename == '':
+        return 'No selected file', 400
+
+    # Save the uploaded file to a desired location
+    file.save(Path(app.config['UPLOAD_FOLDER']) / str(file.filename))
+    
+    food_groups, pred = run_inference(file, False,False)
 
     output = {"food_groups": food_groups, "prediction": pred}
 
