@@ -42,7 +42,7 @@ def upload():
         return 'No selected file', 400
 
     # Save the uploaded file to a desired location
-    file.save(Path(app.config['UPLOAD_FOLDER']) / str(file.filename))
+    # file.save(Path(app.config['UPLOAD_FOLDER']) / str(file.filename))
     
     food_groups, pred = run_inference(file, False)
 
