@@ -2,15 +2,23 @@ from typing import List
 
 MAJOR_FOOD_GROUPS = ["meat", "protein", "vegetable", "grain",  "sugar",
                      "fruit", "dairy", "fats", "oil", "sweet", "carbohydrate"]
+import re
+import nltk
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+from nltk.stem import WordNetLemmatizer
+
 
 food_groups_dict = {
     'Fruits': ['apple', 'banana', 'orange', 'grape', 'strawberry', 'kiwi', 'watermelon', 'pineapple', 'mango', 'pear', 'blueberry', 'raspberry', 'blackberry', 'peach', 'plum', 'cherry', 'pomegranate', 'fig', 'cantaloupe', 'dragon fruit', 'guava', 'kiwifruit', 'passion fruit', 'cranberry', 'nectarine', 'apricot', 'papaya', 'lychee', 'star fruit (carambola)', 'persimmon', 'durian', 'jackfruit', 'tamarind', 'soursop (graviola)', 'ugli fruit (unique fruit)', 'kumquat'],
 
     'Vegetables': ['carrot', 'broccoli', 'spinach', 'tomato', 'cucumber', 'bell pepper', 'zucchini', 'sweet potato', 'kale', 'asparagus', 'celery', 'cauliflower', 'green beans', 'peas', 'radish', 'eggplant', 'cabbage', 'lettuce', 'onion', 'garlic', 'artichoke', 'leek', 'squash', 'brussels sprouts', 'collard greens', 'beets', 'turnip', 'rutabaga', 'okra', 'swiss chard', 'bok choy', 'parsnip', 'ginger', 'fennel', 'endive', 'arugula', 'mustard greens', 'jicama', 'kohlrabi', 'daikon', 'chicory', 'watercress', 'yam', 'horseradish', 'chayote', 'pumpkin', 'mushrooms'],
 
-    'Proteins': ['chicken', 'beef', 'tofu', 'fish', 'beans', 'lentils', 'pork', 'shrimp', 'turkey', 'salmon', 'quorn', 'duck', 'lamb', 'tempeh', 'crab', 'lobster', 'ham', 'sausage', 'veal', 'bison', 'venison', 'rabbit', 'elk', 'halibut', 'trout', 'tilapia', 'catfish', 'swordfish', 'barramundi', 'mussels', 'oysters', 'scallops', 'cod', 'sardines', 'anchovies', 'clams', 'octopus', 'squid (calamari)', 'tuna', 'haddock', 'mackerel', 'seitan', 'peas', 'edamame', 'chickpeas', 'black beans', 'kidney beans', 'navy beans', 'pinto beans', 'soybeans', 'almonds', 'walnuts', 'cashews', 'pistachios', 'sunflower seeds', 'pumpkin seeds', 'chia seeds', 'flaxseeds', 'hemp seeds'],
+    'Proteins': ['chicken','meat','steak', 'beef', 'tofu', 'fish', 'beans', 'lentils', 'pork', 'shrimp', 'turkey', 'salmon', 'quorn', 'duck', 'lamb', 'tempeh', 'crab', 'lobster', 'ham', 'sausage', 'veal', 'bison', 'venison', 'rabbit', 'elk', 'halibut', 'trout', 'tilapia', 'catfish', 'swordfish', 'barramundi', 'mussels', 'oysters', 'scallops', 'cod', 'sardines', 'anchovies', 'clams', 'octopus', 'squid (calamari)', 'tuna', 'haddock', 'mackerel', 'seitan', 'peas', 'edamame', 'chickpeas', 'black beans', 'kidney beans', 'navy beans', 'pinto beans', 'soybeans', 'almonds', 'walnuts', 'cashews', 'pistachios', 'sunflower seeds', 'pumpkin seeds', 'chia seeds', 'flaxseeds', 'hemp seeds'],
 
     'Grains': ['rice','pasta','spaghetti', 'fettuccine', 'penne', 'rigatoni', 'farfalle', 'ravioli', 'tortellini', 'lasagna', 'orzo', 'linguine', 'cannelloni', 'gnocchi', 'tagliatelle', 'pappardelle', 'orecchiette', 'capellini', 'macaroni', 'fusilli', 'rotini', 'quinoa', 'oats', 'barley', 'wheat', 'bulgur', 'farro', 'couscous', 'millet', 'sorghum', 'buckwheat', 'amaranth', 'teff', 'spelt', 'rye', 'cornmeal', 'polenta', 'wild rice', 'fonio', 'triticale', 'einkorn', 'kamut', 'freekeh', 'sorghum', 'chickpea flour', 'semolina', 'chia seeds', 'quinoa flour', 'almond flour', 'coconut flour'],
+    
+    'Fast Foods': ['hamburger', 'pizza', 'french fries', 'hot dog', 'chicken nuggets', 'tacos', 'burritos', 'fried chicken', 'onion rings', 'mozzarella sticks', 'cheeseburger','gyro', 'kebab', 'quesadilla', 'chicken wings', 'nachos', 'bagels', 'pretzel', 'sliders', 'corn dog', 'fish and chips', 'potato wedges', 'philly cheesesteak', 'chili dog', 'loaded fries', 'sub sandwich', 'falafel sandwich', 'pita wrap', 'churros', 'popcorn chicken', 'meatball sub', 'bacon cheeseburger', 'chicken sandwich', 'tater tots', 'jalapeño poppers', 'calzone', 'stromboli',  'egg rolls', 'spring rolls', 'empanadas', 'big mac', 'whopper', 'nuggets', 'mcflurry',  'chicken tenders', 'spicy chicken sandwich', 'curly fries', 'taco supreme', 'cinnabon'],
 
     'Dairy': ['milk', 'cheese', 'yogurt', 'butter', 'eggs', 'cottage cheese', 'cream', 'cheddar', 'greek yogurt', 'feta', 'mozzarella', 'goat cheese', 'swiss cheese', 'brie', 'ricotta', 'sour cream', 'parmesan', 'havarti', 'provolone', 'blue cheese', 'gouda', 'asiago', 'colby jack', 'mascarpone', 'queso fresco', 'queso blanco', 'camembert', 'roquefort', 'stilton', 'emmental', 'gruyère', 'halloumi', 'manchego', 'monterey jack', 'munster', 'neufchâtel', 'paneer', 'pecorino', 'romano', 'smetana', 'tilsit', 'velveeta', 'burrata', 'clotted cream', 'crème fraîche', 'double cream', 'edam', 'fontina', 'jarlsberg', 'kefir', 'limburger', 'mascarpone', 'oaxaca', 'quark', 'reblochon', 'ricotta salata', 'stracciatella'],
 
@@ -71,14 +79,39 @@ food_groups_dict_updated= {
     'Seafood': ['salmon', 'shrimp', 'tuna', 'tilapia', 'cod', 'trout', 'catfish', 'sardines', 'clams', 'mussels', 'oysters', 'lobster', 'crab', 'scallops', 'squid', 'anchovies', 'octopus', 'swordfish', 'haddock', 'sea bass', 'mahi-mahi', 'halibut', 'grouper', 'rockfish', 'snapper', 'caviar', 'eel', 'smoked salmon', 'whitefish', 'barramundi', 'bluefish', 'bonito', 'branzino', 'carp', 'dungeness crab', 'flounder', 'king crab', 'lake trout', 'langoustine', 'monkfish', 'mullet', 'perch', 'pike', 'pollock', 'pompano', 'rainbow trout', 'red snapper', 'sea bream', 'sea cucumber', 'sea urchin', 'shark', 'skate', 'sole', 'sturgeon', 'turbot', 'wahoo', 'yellowtail', 'yellowfin tuna']
 }
 
+lemmatizer = WordNetLemmatizer()
+stop_words = set(stopwords.words('english'))
+
+def clean_generated_text(text):
+    """
+    Cleans the AI response by removing stopwords, punctuation, and lemmatizing words.
+    """
+    words = word_tokenize(text.lower())
+    
+    filtered_words = [
+        lemmatizer.lemmatize(word) for word in words 
+        if word.isalpha() and word not in stop_words
+    ]
+    
+    return " ".join(filtered_words)
+
 def find_list_elements_in_string(food_groups_dict, generated_text):
+    """
+    Find and return food items and their categories from a dictionary of food groups 
+    after cleaning the AI-generated response.
+    """
     found_elements = {}
+    
+    # Clean the text before parsing
+    cleaned_text = clean_generated_text(generated_text)
+    
     for category, items in food_groups_dict.items():
         for item in items:
-            if item.lower() in generated_text.lower():
+            # Match whole words only
+            if re.search(rf'\b{item.lower()}\b', cleaned_text):
                 if category not in found_elements:
                     found_elements[category] = []
                 found_elements[category].append(item)
+                
     return found_elements
-
 

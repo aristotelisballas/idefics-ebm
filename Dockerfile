@@ -10,6 +10,8 @@ COPY requirements.txt .
 # Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
+RUN python -m nltk.downloader punkt stopwords wordnet
+
 # Copy the Flask app files into the container
 COPY . .
 

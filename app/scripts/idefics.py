@@ -12,7 +12,7 @@ def run_inference(img_uri, url=False,old_dict=True):
     if url:
         prompts = [
             [
-                "User: Can you identify the food items and their categories in this image?",
+                "User: Please identify the food items and their categories in this image.",
                 f"{img_uri}",
                 "<end_of_utterance>",
             ],
@@ -21,7 +21,7 @@ def run_inference(img_uri, url=False,old_dict=True):
         img = Image.open(img_uri)
         prompts = [
             [
-                "User: Can you identify the food items and their categories in this image?",
+                "User: Please identify the food items and their categories in this image.",
                 img,
                 "<end_of_utterance>",
             ],
