@@ -64,10 +64,14 @@ def upload_udpated():
         return 'No selected file', 400
 
     # Save the uploaded file to a desired location
-    file.save(Path(app.config['UPLOAD_FOLDER']) / str(file.filename))
+    file_path = Path(app.config['UPLOAD_FOLDER']) / str(file.filename)
+    file.save(file_path)
     
-    food_groups, pred = run_inference(file, False,False)
+    # Reopen the saved file so that Image.open can properly read it
+    with open(file_path, 'rb') as f:
+        food_groups, pred = run_inference(f, False, False)
 
     output = {"food_groups": food_groups, "prediction": pred}
 
     return f"{str(output)}", 200
+
