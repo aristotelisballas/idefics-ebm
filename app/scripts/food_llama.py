@@ -45,7 +45,7 @@ def run_inference(img_uri, url=False,old_dict=True):
         messages = [
             {"role": "user", "content": [
                 {"type": "image"},
-                {"type": "text", "text": "What type of food is shown in this image?"}
+                {"type": "text", "text": "For the given image, list every visible food item and its food category."}
             ]}
         ]
 

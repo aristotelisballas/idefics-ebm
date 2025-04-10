@@ -1,7 +1,7 @@
 from flask import Flask, request
 
-# from scripts.idefics import run_inference
-from scripts.food_llama import run_inference
+from scripts.idefics import run_inference
+# from scripts.food_llama import run_inference
 from pathlib import Path
 
 UPLOAD_FOLDER = './static/images/'
