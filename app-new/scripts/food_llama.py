@@ -4,20 +4,17 @@ from PIL import Image
 from transformers import MllamaForConditionalGeneration, AutoProcessor
 from scripts.utils import find_list_elements_in_string, food_groups_dict, food_groups_dict_updated
 
-# Use the correct model id from Hugging Face
-model_id = "meta-llama/Llama-3.2-11B-Vision-Instruct"
+model_id = "AdaptLLM/food-Llama-3.2-11B-Vision-Instruct"
 
-# Load the model with the recommended settings.
 model = MllamaForConditionalGeneration.from_pretrained(
     model_id,
-    torch_dtype=torch.bfloat16,   
+    torch_dtype=torch.bfloat32,   
     device_map="auto",
 )
 processor = AutoProcessor.from_pretrained(model_id)
 
 def run_inference(img_uri, url=False, old_dict=True):
     if url:
-        # Open the image from URL
         image = Image.open(requests.get(img_uri, stream=True).raw)
         messages = [
             {
@@ -29,7 +26,6 @@ def run_inference(img_uri, url=False, old_dict=True):
             }
         ]
     else:
-        # Open the image from a file or file-like object
         image = Image.open(img_uri)
         messages = [
             {
@@ -41,7 +37,6 @@ def run_inference(img_uri, url=False, old_dict=True):
             }
         ]
 
-    # Prepare the input text using the model's processor
     input_text = processor.apply_chat_template(messages, add_generation_prompt=True)
     inputs = processor(
         image,
@@ -50,7 +45,6 @@ def run_inference(img_uri, url=False, old_dict=True):
         return_tensors="pt"
     ).to(model.device)
 
-    # Generate output from the model
     output = model.generate(**inputs, max_new_tokens=30)
     decoded_output = processor.decode(output[0])
     print(decoded_output)
