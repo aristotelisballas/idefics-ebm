@@ -12,3 +12,15 @@ services:
       FLASK_APP: app.py
       FLASK_RUN_HOST: 0.0.0.0
 
+  ebm-app-new:
+    build:
+      context: ./app-new
+      dockerfile: Dockerfile.new
+    ports:
+      - "5001:5001"  
+    volumes:
+      - ./app-new:/app
+    environment:
+      FLASK_APP: app.py
+      FLASK_RUN_HOST: 0.0.0.0
+
