@@ -8,7 +8,7 @@ model_id = "AdaptLLM/food-Llama-3.2-11B-Vision-Instruct"
 
 model = MllamaForConditionalGeneration.from_pretrained(
     model_id,
-    torch_dtype=torch.bfloat32,   
+    torch_dtype=torch.bfloat16,   
     device_map="auto",
 )
 processor = AutoProcessor.from_pretrained(model_id)
@@ -32,7 +32,7 @@ def run_inference(img_uri, url=False, old_dict=True):
                 "role": "user",
                 "content": [
                     {"type": "image"},
-                    {"type": "text", "text": "For the given image, list every visible food item and its food category."}
+                    {"type": "text", "text": "List all visible food items and their categories in the image."}
                 ]
             }
         ]
@@ -45,7 +45,7 @@ def run_inference(img_uri, url=False, old_dict=True):
         return_tensors="pt"
     ).to(model.device)
 
-    output = model.generate(**inputs, max_new_tokens=30)
+    output = model.generate(**inputs, max_new_tokens=50)
     decoded_output = processor.decode(output[0])
     print(decoded_output)
     
