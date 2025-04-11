@@ -4,52 +4,44 @@ from PIL import Image
 from transformers import MllamaForConditionalGeneration, AutoProcessor
 from scripts.utils import find_list_elements_in_string, food_groups_dict, food_groups_dict_updated
 
-model_id = "AdaptLLM/food-Llama-3.2-11B-Vision-Instruct"
+# Use the correct model id from Hugging Face
+model_id = "meta-llama/Llama-3.2-11B-Vision-Instruct"
 
+# Load the model with the recommended settings.
 model = MllamaForConditionalGeneration.from_pretrained(
     model_id,
-    torch_dtype=torch.bfloat16,
-).to('cpu')
+    torch_dtype=torch.bfloat16,   
+    device_map="auto",
+)
 processor = AutoProcessor.from_pretrained(model_id)
 
-# url = "https://huggingface.co/datasets/huggingface/documentation-images/resolve/0052a70beed5bf71b92610a43a52df6d286cd5f3/diffusers/rabbit.jpg"
-
-# NOTE: For AdaMLLM, always place the image at the beginning of the input instruction in the messages.
-# messages = [
-#     {"role": "user", "content": [
-#         {"type": "image"},
-#         {"type": "text", "text": "If I had to write a haiku for this one, it would be: "}
-#     ]}
-# ]
-# input_text = processor.apply_chat_template(messages, add_generation_prompt=True)
-# inputs = processor(
-#     image,
-#     input_text,
-#     add_special_tokens=False,
-#     return_tensors="pt"
-# ).to(model.device)
-#
-# output = model.generate(**inputs, max_new_tokens=30)
-# print(processor.decode(output[0]))
-
-def run_inference(img_uri, url=False,old_dict=True):
+def run_inference(img_uri, url=False, old_dict=True):
     if url:
+        # Open the image from URL
         image = Image.open(requests.get(img_uri, stream=True).raw)
         messages = [
-            {"role": "user", "content": [
-                {"type": "image"},
-                {"type": "text", "text": "What type of food is shown in this image?"}
-            ]}
+            {
+                "role": "user",
+                "content": [
+                    {"type": "image"},
+                    {"type": "text", "text": "What type of food is shown in this image?"}
+                ]
+            }
         ]
     else:
+        # Open the image from a file or file-like object
         image = Image.open(img_uri)
         messages = [
-            {"role": "user", "content": [
-                {"type": "image"},
-                {"type": "text", "text": "For the given image, list every visible food item and its food category."}
-            ]}
+            {
+                "role": "user",
+                "content": [
+                    {"type": "image"},
+                    {"type": "text", "text": "For the given image, list every visible food item and its food category."}
+                ]
+            }
         ]
 
+    # Prepare the input text using the model's processor
     input_text = processor.apply_chat_template(messages, add_generation_prompt=True)
     inputs = processor(
         image,
@@ -58,16 +50,14 @@ def run_inference(img_uri, url=False,old_dict=True):
         return_tensors="pt"
     ).to(model.device)
 
+    # Generate output from the model
     output = model.generate(**inputs, max_new_tokens=30)
-    print(processor.decode(output[0]))
-    generated_text = processor.decode(output[0])
-    # for t in generated_text:
-    #     print(f"{t}\n")
-
-    # Using the detailed food groups dictionary for more specific matching
+    decoded_output = processor.decode(output[0])
+    print(decoded_output)
+    
     if old_dict:
-        food_groups = find_list_elements_in_string(food_groups_dict, " ".join(generated_text))
+        food_groups = find_list_elements_in_string(food_groups_dict, " ".join(decoded_output))
     else:
-        food_groups = find_list_elements_in_string(food_groups_dict_updated, " ".join(generated_text))
+        food_groups = find_list_elements_in_string(food_groups_dict_updated, " ".join(decoded_output))
 
-    return food_groups, generated_text
+    return food_groups, decoded_output
