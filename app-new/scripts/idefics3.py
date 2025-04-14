@@ -24,7 +24,7 @@ def run_inference(img_uri, url=False, old_dict=True):
             "role": "user",
             "content": [
                 {"type": "image"},
-                {"type": "text", "text": "For the given image, list every visible food item and its food category."},
+              {"type": "text", "text": "What are the food categories and types in the image? Respond concisely without extra explanations. Only list the items and their categories."},
             ]
         }
     ]
@@ -34,7 +34,7 @@ def run_inference(img_uri, url=False, old_dict=True):
     inputs = processor(text=prompt, images=[image], return_tensors="pt")
     inputs = {k: v.to(DEVICE) for k, v in inputs.items()}
     
-    generated_ids = model.generate(**inputs, max_new_tokens=100)
+    generated_ids = model.generate(**inputs, max_new_tokens=150)
     generated_text = processor.batch_decode(generated_ids, skip_special_tokens=True)
     
     for t in generated_text:
