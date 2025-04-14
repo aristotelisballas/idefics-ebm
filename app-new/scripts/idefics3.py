@@ -24,7 +24,11 @@ def run_inference(img_uri, url=False, old_dict=True):
             "role": "user",
             "content": [
                 {"type": "image"},
-              {"type": "text", "text": "What are the food categories and types in the image? Respond concisely without extra explanations. Only list the items and their categories."},
+              {"type": "text", "text": (
+                    "What are the food categories and types in the image? List every visible food item along with its specific type and food category. " 
+                    "For example, if meat is visible, specify whether it is beef, chicken, etc. "
+                    "Be concise but include enough detail to differentiate between similar items."
+                 )},
             ]
         }
     ]
